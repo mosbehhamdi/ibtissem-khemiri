@@ -1,0 +1,94 @@
+name: Build, Test, Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: portfolio-deploy
+  cancel-in-progress: false
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run validate
+      - run: npm run build
+      - run: npm run validate # re-validates dist/ output
+
+      - name: Install Playwright browser
+        run: npx playwright install chromium
+
+      - name: E2E smoke (production build, 3 viewports)
+        run: |
+          (npm run preview -- --port 4173 --strictPort >/tmp/preview.log 2>&1 &)
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:4173/ && break; sleep 2; done
+          E2E_BASE_URL=http://127.0.0.1:4173/ npm run test:e2e
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy-pages:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Optional OVH mirror leg: deploys the SAME tested build to an
+  # isolated sub-folder on OVH shared hosting via FTP.
+  # Runs only when ALL THREE secrets exist — otherwise it is skipped
+  # silently and Pages deployment is unaffected. Never touches the
+  # existing site: it syncs ONE dedicated folder only, with clean
+  # slate mode OFF (no deletions outside that folder).
+  deploy-ovh-mirror:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci && npm run build
+      - name: Check OVH secrets present
+        id: gate
+        env:
+          H: ${{ secrets.OVH_FTP_HOST }}
+          U: ${{ secrets.OVH_FTP_USERNAME }}
+          P: ${{ secrets.OVH_FTP_PASSWORD }}
+        run: |
+          if [ -n "$H" ] && [ -n "$U" ] && [ -n "$P" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else echo "ready=false" >> "$GITHUB_OUTPUT"; echo "OVH secrets missing — skipping OVH mirror leg."; fi
+      - name: Deploy to OVH isolated folder (FTP)
+        if: steps.gate.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.OVH_FTP_HOST }}
+          username: ${{ secrets.OVH_FTP_USERNAME }}
+          password: ${{ secrets.OVH_FTP_PASSWORD }}
+          protocol: ftp
+          local-dir: ./dist/
+          server-dir: ${{ secrets.OVH_FTP_DIR }}
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.DS_Store

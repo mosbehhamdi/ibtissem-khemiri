@@ -1,0 +1,19 @@
+{
+  "name": "ibtissem-khemiri-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Professional portfolio of Ibtissem Khemiri, QA Engineer. Static site built with Vite.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173",
+    "validate": "node scripts/validate.mjs",
+    "test:e2e": "node e2e/smoke.mjs",
+    "test": "npm run validate"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1",
+    "vite": "^6.0.0"
+  }
+}
