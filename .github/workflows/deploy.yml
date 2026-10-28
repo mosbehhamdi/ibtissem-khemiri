@@ -35,9 +35,13 @@ jobs:
 
       - name: E2E smoke (production build, 3 viewports)
         run: |
-          (npm run preview -- --port 4173 --strictPort >/tmp/preview.log 2>&1 &)
+          nohup npx vite preview --port 4173 --strictPort --host 127.0.0.1 > /tmp/preview.log 2>&1 &
+          echo $! > /tmp/preview.pid
           for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:4173/ && break; sleep 2; done
+          echo "--- preview.log ---"; cat /tmp/preview.log || true
+          curl -sf -o /dev/null http://127.0.0.1:4173/
           E2E_BASE_URL=http://127.0.0.1:4173/ npm run test:e2e
+          kill $(cat /tmp/preview.pid) || true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
