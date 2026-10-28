@@ -32,7 +32,6 @@ Optional OVH alternative: attach the domain as a multisite to the existing hosti
 
 1. Install (`npm ci`), validate source, build (`npm run build`), validate `dist/`.
 2. Deploy to GitHub Pages. Any failure blocks the release — the previous live version stays up.
-3. OVH mirror leg (optional, skipped unless all secrets exist).
 
 Check a deployment: repo → **Actions** tab → latest *Build, Test, Deploy* run (green = live).
 
@@ -41,32 +40,15 @@ Check a deployment: repo → **Actions** tab → latest *Build, Test, Deploy* ru
 - GitHub Pages: Settings → Pages → Source: **GitHub Actions**. (Do once; workflow handles the rest.)
 - No secrets needed for the Pages URL.
 
-## Optional: OVH mirror (isolated folder, zero risk to existing sites)
+## OVH mirror — REMOVED 2026-10-29 (owner request)
 
-Create these **Actions secrets** (repo → Settings → Secrets and variables → Actions → New repository secret) — names only, values stay secret:
+The portfolio folder `www/ibtissem-khemiri/` was fully deleted from the hosting (all 5 files + 2 folders, verified via FTP; `www/` restored to its 6 original entries). The `deploy-ovh-mirror` job was removed from the workflow and all four `OVH_FTP_*` secrets deleted. Re-pushing can no longer recreate it.
 
-| Secret | Example value shape |
-|---|---|
-| `OVH_FTP_HOST` | `ftp.cluster100.hosting.ovh.net` (hosting cluster for `ledelice.tn`; already set) |
-| `OVH_FTP_USERNAME` | dedicated FTP user (scoped to the portfolio folder) — still needed |
-| `OVH_FTP_PASSWORD` | FTP password (rotate if ever shared in chat/email) — still needed |
-| `OVH_FTP_DIR` | `www/ibtissem-khemiri/` (NEW folder — never an existing site root; already set) |
+Hosting facts kept for reference:
 
-Known OVH account facts (from account emails, 2026-10-28):
-
-- Hosting cluster: `ledelig.cluster100.hosting.ovh.net`; DNS already compliant (`A 5.135.23.164`, `AAAA 2001:41d0:301::100`).
-- MySQL `ledeligledelice` exists on `ledeligledelice.mysql.db` — **not needed** by this static portfolio (no database; nothing connects to it).
-- Hosting verified 2026-10-29 via FTP (`ftp.cluster100.hosting.ovh.net`): `www/` holds the live Pâtisserie app (`index.html`, `assets/`, `api/`, …) plus `zidrep-team/` projects — the mirror deploys ONLY into the new `www/ibtissem-khemiri/` folder and never touches those entries. Staging URL after first mirror deploy: `https://ledelice.tn/ibtissem-khemiri/` (infra staging only — NOT the public URL; public stays Pages until `ibtissem-khemiri.com` is bought).
-
-The FTP **username** is still unknown — find it in OVH Manager → Web hosting → FTP users (do not guess; repeated wrong logins can trigger a temporary block).
-
-Safety rules enforced by the workflow:
-
-- The OVH leg syncs **only** `OVH_FTP_DIR`, with `dangerous-clean-slate: false` (nothing outside that folder is touched or deleted).
-- If any secret is missing, the leg is **skipped** — Pages deployment still succeeds.
-- Never point `OVH_FTP_DIR` at `www/` or any existing site folder.
-
-Recommended: create a **dedicated FTP user in OVH Manager** restricted to the portfolio folder (Hosting → FTP → create user), instead of reusing the main account.
+- Cluster: `ledelig.cluster100.hosting.ovh.net`; DNS compliant (`A 5.135.23.164`, `AAAA 2001:41d0:301::100`).
+- MySQL `ledeligledelice` exists — never used by this static portfolio.
+- `/ibtissem-khemiri/` (and any unknown path) serves the Pâtisserie SPA fallback via the site's own `.htaccess` — pre-existing host behavior, not portfolio content.
 
 ## Updating the site (for Ibtissem)
 
@@ -80,10 +62,9 @@ Recommended: create a **dedicated FTP user in OVH Manager** restricted to the po
 ## Rollback
 
 - **Pages:** Actions → pick the last green run → *Re-run jobs* (redeploys that commit's build). Or `git revert` the bad commit and push.
-- **OVH mirror:** re-running any green workflow redeploys that commit's `dist/` to the same folder.
 
 ## Regression guarantee for existing OVH sites
 
 - Baseline recorded 2026-10-28: `https://ledelice.tn/` and `https://www.ledelice.tn/` → HTTP 200, valid SSL, SPA homepage (2 535 bytes), main bundle `assets/main-*.js` (~965 KB).
-- The portfolio never deploys to the existing site's document root; the OVH leg targets a NEW isolated folder only.
+- The portfolio never deployed to the existing site's document root; its former isolated folder `www/ibtissem-khemiri/` was fully removed 2026-10-29.
 - After any OVH change, re-check: both URLs return 200 with unchanged homepage size/title and no new console/network errors.

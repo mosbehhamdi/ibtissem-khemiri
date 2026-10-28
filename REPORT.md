@@ -70,6 +70,12 @@ Using the account emails (cluster `ledelig.cluster100.hosting.ovh.net`) plus the
 - Staging: `https://ledelice.tn/ibtissem-khemiri/` → HTTP 200, correct title, e2e smoke PASS on 3 viewports (staging only — public URL unchanged until `ibtissem-khemiri.com` is bought).
 - Production regression: `https://ledelice.tn/` byte-identical to baseline (2 535 bytes). Zero downtime.
 - Manager-UI browsing was not needed and not achieved (MCP browser held by another session; profile-copy sessions expired; no stored decryptable password) — FTP + secrets completed the goal without it. Rotate the FTP password in OVH Manager at your convenience since it passed through chat.
+
+## Addendum 2026-10-29 (later) — portfolio REMOVED from OVH on owner request
+
+- `www/ibtissem-khemiri/` deleted file-by-file via FTP (5 files, `assets/` subfolder, folder itself); `www/` verified back to its 6 original entries; `ledelice.tn/` root byte-identical to baseline; `/ibtissem-khemiri/` now serves the host's pre-existing SPA fallback (same as any unknown path — confirmed with a random-path probe).
+- `deploy-ovh-mirror` job removed from the workflow, all four `OVH_FTP_*` secrets deleted, docs updated. Future pushes deploy Pages only and cannot recreate the folder.
+- Public portfolio unaffected: https://mosbehhamdi.github.io/ibtissem-khemiri/ still live.
 - Pre-deploy baseline (2026-10-28): `/tmp/opencode/baseline/` (headers, bodies, summaries for `ledelice.tn` + `www`), post-deploy recheck `/tmp/opencode/recheck.html`.
 - Commits: `b551bbe` (initial portfolio) → `ccf5b4b` (CI fix) → `5f639a1` (gate + theme-color; deployed live).
 - Workflow runs: `40773707430` (failed, diagnosis vehicle), `40774000735` (green, live), plus the `5f639a1` run (green, live).
