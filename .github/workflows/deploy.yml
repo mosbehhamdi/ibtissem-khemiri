@@ -80,8 +80,9 @@ jobs:
           H: ${{ secrets.OVH_FTP_HOST }}
           U: ${{ secrets.OVH_FTP_USERNAME }}
           P: ${{ secrets.OVH_FTP_PASSWORD }}
+          D: ${{ secrets.OVH_FTP_DIR }}
         run: |
-          if [ -n "$H" ] && [ -n "$U" ] && [ -n "$P" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else echo "ready=false" >> "$GITHUB_OUTPUT"; echo "OVH secrets missing — skipping OVH mirror leg."; fi
+          if [ -n "$H" ] && [ -n "$U" ] && [ -n "$P" ] && [ -n "$D" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else echo "ready=false" >> "$GITHUB_OUTPUT"; echo "OVH secrets incomplete — skipping OVH mirror leg."; fi
       - name: Deploy to OVH isolated folder (FTP)
         if: steps.gate.outputs.ready == 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
