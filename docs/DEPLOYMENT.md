@@ -27,10 +27,16 @@ Create these **Actions secrets** (repo → Settings → Secrets and variables �
 
 | Secret | Example value shape |
 |---|---|
-| `OVH_FTP_HOST` | `ftp.ledelice.tn` (or OVH cluster host) |
-| `OVH_FTP_USERNAME` | dedicated FTP user (scoped to the portfolio folder) |
-| `OVH_FTP_PASSWORD` | FTP password (rotate if ever shared in chat/email) |
-| `OVH_FTP_DIR` | `www/ibtissem-khemiri/` (NEW folder — never an existing site root) |
+| `OVH_FTP_HOST` | `ftp.cluster100.hosting.ovh.net` (hosting cluster for `ledelice.tn`; already set) |
+| `OVH_FTP_USERNAME` | dedicated FTP user (scoped to the portfolio folder) — still needed |
+| `OVH_FTP_PASSWORD` | FTP password (rotate if ever shared in chat/email) — still needed |
+| `OVH_FTP_DIR` | `www/ibtissem-khemiri/` (NEW folder — never an existing site root; already set) |
+
+Known OVH account facts (from account emails, 2026-10-28):
+
+- Hosting cluster: `ledelig.cluster100.hosting.ovh.net`; DNS already compliant (`A 5.135.23.164`, `AAAA 2001:41d0:301::100`).
+- MySQL `ledeligledelice` exists on `ledeligledelice.mysql.db` — **not needed** by this static portfolio (no database; nothing connects to it).
+- The FTP **username** is still unknown — find it in OVH Manager → Web hosting → FTP users (do not guess; repeated wrong logins can trigger a temporary block).
 
 Safety rules enforced by the workflow:
 
