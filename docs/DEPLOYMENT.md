@@ -2,9 +2,29 @@
 
 ## Public URL
 
-- **Live portfolio:** `https://mosbehhamdi.github.io/ibtissem-khemiri/`
+- **Live portfolio (today):** `https://mosbehhamdi.github.io/ibtissem-khemiri/`
+- **Target personal URL:** `https://ibtissem-khemiri.com` — repo is already prepared (`public/CNAME` + CI check). Goes live as soon as the domain is purchased and DNS points to GitHub Pages (see below).
 - Source of truth: this repository (`main` branch).
 - No `ledelice` branding appears anywhere on the portfolio (enforced by `npm run validate` in CI).
+
+## Custom domain `ibtissem-khemiri.com` (requires purchase — not yet owned)
+
+RDAP check 2026-10-28: domain is **unregistered**. Someone must buy it (registrar of choice, ~€10–15/yr; OVH is fine since hosting is already there).
+
+After purchase, set these DNS records at the registrar (GitHub Pages):
+
+| Host | Type | Value |
+|---|---|---|
+| `@` (apex) | A | `185.199.108.153` |
+| `@` (apex) | A | `185.199.109.153` |
+| `@` (apex) | A | `185.199.110.153` |
+| `@` (apex) | A | `185.199.111.153` |
+| `www` | CNAME | `mosbehhamdi.github.io.` |
+
+Then: repo → Settings → Pages → Custom domain = `ibtissem-khemiri.com` → Save → wait for DNS check → **Enforce HTTPS**.
+No code change or redeploy needed — the next Actions run (or Re-run of the latest green one) publishes the already-present `CNAME` file.
+
+Optional OVH alternative: attach the domain as a multisite to the existing hosting pointing at `www/ibtissem-khemiri/` (isolated folder). Keep Pages as primary unless you prefer OVH to serve it.
 
 ## How auto-deploy works
 

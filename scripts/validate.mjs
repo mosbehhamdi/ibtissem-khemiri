@@ -32,6 +32,16 @@ for (const a of new Set(anchors)) check(ids.has(a), `nav anchor target exists: #
 // No invented-contact risk: TODO markers must remain visible in repo until replaced.
 check(/TODO/.test(content), 'TODO markers for real contact links still tracked');
 
+// Custom-domain binding for GitHub Pages (file is deployed as-is).
+const cnamePath = join(root, 'public', 'CNAME');
+if (existsSync(cnamePath)) {
+  const cname = readFileSync(cnamePath, 'utf8').trim();
+  check(cname === 'ibtissem-khemiri.com', `public/CNAME targets personal domain (got: ${cname})`);
+  check(!/ledelice/i.test(cname), 'CNAME contains no unrelated brand');
+} else {
+  console.log('INFO  public/CNAME absent — custom domain not configured');
+}
+
 // If dist/ exists (post-build), verify it is self-contained and clean.
 const dist = join(root, 'dist');
 if (existsSync(dist)) {
