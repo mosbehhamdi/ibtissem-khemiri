@@ -56,7 +56,9 @@ Known OVH account facts (from account emails, 2026-10-28):
 
 - Hosting cluster: `ledelig.cluster100.hosting.ovh.net`; DNS already compliant (`A 5.135.23.164`, `AAAA 2001:41d0:301::100`).
 - MySQL `ledeligledelice` exists on `ledeligledelice.mysql.db` — **not needed** by this static portfolio (no database; nothing connects to it).
-- The FTP **username** is still unknown — find it in OVH Manager → Web hosting → FTP users (do not guess; repeated wrong logins can trigger a temporary block).
+- Hosting verified 2026-10-29 via FTP (`ftp.cluster100.hosting.ovh.net`): `www/` holds the live Pâtisserie app (`index.html`, `assets/`, `api/`, …) plus `zidrep-team/` projects — the mirror deploys ONLY into the new `www/ibtissem-khemiri/` folder and never touches those entries. Staging URL after first mirror deploy: `https://ledelice.tn/ibtissem-khemiri/` (infra staging only — NOT the public URL; public stays Pages until `ibtissem-khemiri.com` is bought).
+
+The FTP **username** is still unknown — find it in OVH Manager → Web hosting → FTP users (do not guess; repeated wrong logins can trigger a temporary block).
 
 Safety rules enforced by the workflow:
 

@@ -62,7 +62,6 @@ Date: 2026-10-28 · Executor: local OpenCode agent (autonomous) · Local project
 5. Rollback: re-run the last green workflow, or `git revert` + push.
 
 ## Appendix — baseline & artifacts
-
 - Pre-deploy baseline (2026-10-28): `/tmp/opencode/baseline/` (headers, bodies, summaries for `ledelice.tn` + `www`), post-deploy recheck `/tmp/opencode/recheck.html`.
 - Commits: `b551bbe` (initial portfolio) → `ccf5b4b` (CI fix) → `5f639a1` (gate + theme-color; deployed live).
 - Workflow runs: `40773707430` (failed, diagnosis vehicle), `40774000735` (green, live), plus the `5f639a1` run (green, live).
