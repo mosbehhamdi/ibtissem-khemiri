@@ -62,6 +62,14 @@ Date: 2026-10-28 · Executor: local OpenCode agent (autonomous) · Local project
 5. Rollback: re-run the last green workflow, or `git revert` + push.
 
 ## Appendix — baseline & artifacts
+
+## Addendum 2026-10-29 — OVH mirror ACTIVE
+
+Using the account emails (cluster `ledelig.cluster100.hosting.ovh.net`) plus the provided FTP password, FTP access was verified read-only first (`www/` = live Pâtisserie app + `zidrep-team/` projects, target folder absent). All four secrets set (`OVH_FTP_HOST/USERNAME/PASSWORD/DIR`); a stray `MKD` probe folder was removed immediately (`www/` back to 6 entries, confirmed clean).
+- Automated run `bf59c6a`: `build-and-test` ✅, `deploy-pages` ✅, **`deploy-ovh-mirror` ✅ (first live FTP deploy).**
+- Staging: `https://ledelice.tn/ibtissem-khemiri/` → HTTP 200, correct title, e2e smoke PASS on 3 viewports (staging only — public URL unchanged until `ibtissem-khemiri.com` is bought).
+- Production regression: `https://ledelice.tn/` byte-identical to baseline (2 535 bytes). Zero downtime.
+- Manager-UI browsing was not needed and not achieved (MCP browser held by another session; profile-copy sessions expired; no stored decryptable password) — FTP + secrets completed the goal without it. Rotate the FTP password in OVH Manager at your convenience since it passed through chat.
 - Pre-deploy baseline (2026-10-28): `/tmp/opencode/baseline/` (headers, bodies, summaries for `ledelice.tn` + `www`), post-deploy recheck `/tmp/opencode/recheck.html`.
 - Commits: `b551bbe` (initial portfolio) → `ccf5b4b` (CI fix) → `5f639a1` (gate + theme-color; deployed live).
 - Workflow runs: `40773707430` (failed, diagnosis vehicle), `40774000735` (green, live), plus the `5f639a1` run (green, live).
